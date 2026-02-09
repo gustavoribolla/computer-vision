@@ -55,37 +55,8 @@ By the end of this course, students will be able to:
 
 ## Assessment
 
-- **Lab Assignments:** 30%
-- **Midterm Checkpoint:** 20%
-- **Final Project:** 50%
-  - Proposal (5%)
-  - Implementation (25%)
-  - Presentation (10%)
-  - Report (10%)
-
-## Repository Structure
-
-```
-.
-├── README.md                 # This file
-├── lectures/                 # Lecture slides (PDF)
-│   ├── 01_introduction.pdf
-│   ├── 02_neural_networks_basic.pdf
-│   └── ...
-├── labs/                     # Lab assignments and starter code
-│   ├── lab01_python_review/
-│   ├── lab02_neural_networks/
-│   └── ...
-├── resources/                # Additional resources
-│   ├── datasets/
-│   ├── reference_papers/
-│   └── tutorials/
-├── project/                  # Final project guidelines
-│   ├── README.md
-│   ├── proposal_template.md
-│   └── rubric.md
-└── solutions/                # Lab solutions (instructor only)
-```
+- **Lab Assignments:** 25%
+- **Final Project:** 75%
 
 ## Getting Started
 
