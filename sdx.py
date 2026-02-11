@@ -246,6 +246,143 @@ def show_histogram(img: np.ndarray, bins: int = 256, title: str = "Histogram") -
     plt.show()
 
 
+def cv_gridshow(images: np.ndarray, start: int = 0, stop: int = 9, labels: Optional[np.ndarray] = None, 
+                cols: int = 5, figsize: Tuple[int, int] = None) -> None:
+    """
+    Display a grid of images
+    
+    Args:
+        images: Array of images
+        start: Start index (default: 0)
+        stop: Stop index (default: 9)
+        labels: Optional array of labels to display
+        cols: Number of columns in grid (default: 5)
+        figsize: Figure size (auto-calculated if None)
+    """
+    # Get subset of images
+    img_subset = images[start:stop+1]
+    n_images = len(img_subset)
+    
+    # Calculate grid dimensions
+    rows = (n_images + cols - 1) // cols
+    
+    # Auto-calculate figure size if not provided
+    if figsize is None:
+        figsize = (cols * 2, rows * 2)
+    
+    # Create figure
+    fig, axes = plt.subplots(rows, cols, figsize=figsize)
+    
+    # Flatten axes array for easier indexing
+    if rows == 1 and cols == 1:
+        axes = np.array([axes])
+    axes = axes.flatten()
+    
+    # Display images
+    for idx in range(n_images):
+        ax = axes[idx]
+        img = img_subset[idx]
+        
+        # Display image
+        if len(img.shape) == 2:
+            ax.imshow(img, cmap='gray', vmin=0, vmax=255)
+        else:
+            ax.imshow(img)
+        
+        # Add label if provided
+        if labels is not None:
+            label = labels[start + idx]
+            ax.set_title(f'{label}', fontsize=10)
+        
+        ax.axis('off')
+    
+    # Hide unused subplots
+    for idx in range(n_images, len(axes)):
+        axes[idx].axis('off')
+    
+    plt.tight_layout()
+    plt.show()
+
+
+def plot_confusion(model, test_images: np.ndarray, test_labels: np.ndarray) -> None:
+    """
+    Plot confusion matrix for a PyTorch model
+    
+    Args:
+        model: PyTorch model
+        test_images: Test images (numpy array)
+        test_labels: Test labels (numpy array)
+    """
+    try:
+        import torch
+    except ImportError:
+        print("Error: PyTorch not installed. This function requires PyTorch.")
+        return
+    
+    try:
+        from sklearn.metrics import confusion_matrix
+    except ImportError:
+        print("Error: scikit-learn not installed. Please install it: pip install scikit-learn")
+        return
+    
+    try:
+        import seaborn as sns
+        has_seaborn = True
+    except ImportError:
+        has_seaborn = False
+    
+    # Convert to PyTorch tensors
+    device = next(model.parameters()).device
+    
+    # Prepare data
+    if isinstance(test_images, np.ndarray):
+        # Normalize to [0, 1] if needed
+        if test_images.max() > 1.0:
+            test_images = test_images / 255.0
+        test_images = torch.FloatTensor(test_images).unsqueeze(1)  # Add channel dimension
+    
+    # Get predictions
+    model.eval()
+    all_preds = []
+    
+    with torch.no_grad():
+        # Process in batches to avoid memory issues
+        batch_size = 256
+        for i in range(0, len(test_images), batch_size):
+            batch = test_images[i:i+batch_size].to(device)
+            outputs = model(batch)
+            _, predicted = torch.max(outputs, 1)
+            all_preds.extend(predicted.cpu().numpy())
+    
+    # Compute confusion matrix
+    cm = confusion_matrix(test_labels, all_preds)
+    
+    # Plot
+    plt.figure(figsize=(10, 8))
+    
+    if has_seaborn:
+        sns.heatmap(cm, annot=True, fmt='d', cmap='Blues', 
+                    xticklabels=range(10), yticklabels=range(10))
+    else:
+        # Basic matplotlib version
+        plt.imshow(cm, cmap='Blues', interpolation='nearest')
+        plt.colorbar()
+        
+        # Add text annotations
+        for i in range(cm.shape[0]):
+            for j in range(cm.shape[1]):
+                plt.text(j, i, str(cm[i, j]), ha='center', va='center')
+        
+        plt.xticks(range(10), range(10))
+        plt.yticks(range(10), range(10))
+    
+    plt.xlabel('Predicted')
+    plt.ylabel('True')
+    plt.title('Confusion Matrix')
+    plt.tight_layout()
+    plt.show()
+
+
 # Export all public functions
 __all__ = [
     'cv_imread',
@@ -259,5 +396,7 @@ __all__ = [
     'get_image_stats',
     'print_image_info',
     'create_histogram',
-    'show_histogram'
+    'show_histogram',
+    'cv_gridshow',
+    'plot_confusion'
 ]
