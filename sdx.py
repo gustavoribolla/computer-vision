@@ -20,7 +20,7 @@ def cv_imread(filename: str, flags: int = cv.IMREAD_COLOR, as_rgb=True) -> np.nd
         flags: OpenCV imread flags (default: cv.IMREAD_COLOR)
     
     Returns:
-        Image as numpy array in RGB format (converted from BGR)
+        Image as numpy array in RGB format (or BGR if as_rgb==False)
     
     Raises:
         FileNotFoundError: If the image file doesn't exist
