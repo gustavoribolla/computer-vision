@@ -11,7 +11,7 @@ from IPython.display import display
 from PIL import Image
 
 
-def cv_imread(filename: str, flags: int = cv.IMREAD_COLOR) -> np.ndarray:
+def cv_imread(filename: str, as_rgb=True) -> np.ndarray:
     """
     Read an image file using OpenCV with proper error handling
     
@@ -20,20 +20,21 @@ def cv_imread(filename: str, flags: int = cv.IMREAD_COLOR) -> np.ndarray:
         flags: OpenCV imread flags (default: cv.IMREAD_COLOR)
     
     Returns:
-        Image as numpy array in RGB format (converted from BGR)
+        Image as numpy array in RGB format (or BGR if as_rgb==False)
     
     Raises:
         FileNotFoundError: If the image file doesn't exist
         ValueError: If the image cannot be read
     """
-    img = cv.imread(filename, flags)
+    img = cv.imread(filename)
     
     if img is None:
         raise FileNotFoundError(f"Could not read image: {filename}")
     
     # Convert BGR to RGB for color images
-    if len(img.shape) == 3 and img.shape[2] == 3:
-        img = cv.cvtColor(img, cv.COLOR_BGR2RGB)
+    if as_rgb:
+        if len(img.shape) == 3 and img.shape[2] == 3:
+            img = cv.cvtColor(img, cv.COLOR_BGR2RGB)
     
     return img
 
