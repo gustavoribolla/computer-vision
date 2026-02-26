@@ -39,17 +39,12 @@ def cv_imread(filename: str, as_rgb=True) -> np.ndarray:
     return img
 
 
-def cv_grayread(filename: str) -> np.ndarray:
-    """
-    Read an image file as grayscale
-    
-    Args:
-        filename: Path to the image file
-    
-    Returns:
-        Grayscale image as numpy array
-    """
-    return cv_imread(filename, cv.IMREAD_GRAYSCALE)
+def cv_grayread(path, asfloat=False):
+    image = cv_imread(path, as_rgb=False)
+    image = cv.cvtColor(image, cv.COLOR_BGR2GRAY)
+    if asfloat:
+        image = image.astype(np.float32)
+    return image
 
 
 def cv_imshow(img: np.ndarray, title: str = "", figsize: Tuple[int, int] = (10, 10)) -> None:
