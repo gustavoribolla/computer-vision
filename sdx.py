@@ -379,6 +379,12 @@ def plot_confusion(model, test_images: np.ndarray, test_labels: np.ndarray) -> N
     plt.show()
 
 
+def plot_loss(history):
+    plt.plot(history['train_loss'])
+    plt.plot(history['val_loss'])
+    plt.legend(['train', 'test'])
+
+
 # Export all public functions
 __all__ = [
     'cv_imread',
@@ -394,5 +400,6 @@ __all__ = [
     'create_histogram',
     'show_histogram',
     'cv_gridshow',
-    'plot_confusion'
+    'plot_confusion',
+    'plot_loss'
 ]
